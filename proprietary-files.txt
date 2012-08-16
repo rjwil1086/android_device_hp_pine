@@ -8,6 +8,7 @@ lib/libjpeghwdec.so
 lib/libjpeghwenc.so
 lib/libmediaplayerservice.so
 lib/libomxvpu.so
+lib/libomxvpu_enc.so
 lib/libril-rk29-dataonly.so
 lib/librkswscale.so
 lib/librkwmapro.so
@@ -18,8 +19,6 @@ lib/libvpu.so
 lib/libwpa_client.so
 lib/libyuvtorgb.so
 lib/registry
-lib/stagefright.ver
-lib/webkit_ver
 
 # firmware
 etc/firmware/athtcmd_ram.bin
@@ -51,11 +50,11 @@ etc/firmware/sd8686_helper.bin
 lib/hw/audio.primary.rk30board.so
 lib/hw/audio_policy.rk30board.so
 lib/hw/camera.rk30board.so
-lib/hw/copybit.rk30board.so
 lib/hw/gpu.rk30board.so
 lib/hw/gralloc.rk30board.so
 lib/hw/hwcomposer.rk30board.so
 lib/hw/lights.rk30board.so
+lib/hw/power.rk30xx.so
 lib/hw/sensors.rk30board.so
 
 # EGL
