@@ -34,9 +34,14 @@ TARGET_CPU_ABI := armeabi-v7a
 TARGET_CPU_ABI2 := armeabi
 TARGET_CPU_SMP := true
 TARGET_ARCH_VARIANT := armv7-a-neon
+ARCH_ARM_HAVE_VFP := true
 TARGET_ARCH_VARIANT_CPU := cortex-a9
+TARGET_ARCH_VARIANT_FPU := neon
 ARCH_ARM_HAVE_NEON := true
 ARCH_ARM_HAVE_TLS_REGISTER := true
+ARCH_ARM_HAVE_ARMV7A := true
+TARGET_GLOBAL_CFLAGS += -mtune=cortex-a9 -mfpu=neon -mfloat-abi=softfp
+TARGET_GLOBAL_CPPFLAGS += -mtune=cortex-a9 -mfpu=neon -mfloat-abi=softfp
 
 BOARD_KERNEL_BASE := 0x60400000
 BOARD_KERNEL_CMDLINE := 
@@ -49,26 +54,27 @@ TARGET_BOOTLOADER_BOARD_NAME := rk30board
 BOARD_EGL_CFG := device/yuandao/n70/egl.cfg
 USE_OPENGL_RENDERER := true
 ENABLE_WEBGL := true
+BOARD_USE_SKIA_LCDTEXT := true
 
-TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
 TARGET_RECOVERY_INITRC := device/yuandao/n70/recovery.init.rc
-TARGET_RECOVERY_PRE_COMMAND := "busybox dd if=/misc.img of=/dev/block/mtd/by-name/misc; sync"
+TARGET_RECOVERY_PRE_COMMAND := "busybox dd if=/misc.img of=/dev/block/mtdblock0; sync"
 BOARD_HAS_NO_SELECT_BUTTON := true
+BOARD_UMS_LUNFILE := "/sys/class/android_usb/android0/f_mass_storage/lun/file"
+BOARD_UMS_2ND_LUNFILE := "/sys/class/android_usb/android0/f_mass_storage/lun1/file"
 
-#WPA_SUPPLICANT_VERSION := VER_0_6_X
-#BOARD_WPA_SUPPLICANT_DRIVER := NL80211
-#BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_bcmdhd
-#BOARD_HOSTAPD_DRIVER := NL80211
-#BOARD_HOSTAPD_PRIVATE_LIB := lib_driver_cmd_bcmdhd
-BOARD_WLAN_DEVICE := RK903
-
+BOARD_WLAN_DEVICE := rtl8192cu
+WPA_SUPPLICANT_VERSION := VER_0_8_X
+BOARD_WPA_SUPPLICANT_DRIVER := WEXT
+BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_rtl
+BOARD_HOSTAPD_DRIVER        := WEXT
+BOARD_HOSTAPD_PRIVATE_LIB   := lib_driver_cmd_rtl
 WIFI_DRIVER_MODULE_PATH     := "/system/lib/modules/wlan.ko"
-WIFI_DRIVER_FW_PATH_PARAM   := "/sys/module/wlan/parameters/firmware_path"
-WIFI_DRIVER_FW_PATH_STA     := "/system/etc/firmware/fw_RK903.bin"
-WIFI_DRIVER_FW_PATH_AP      := "/system/etc/firmware/fw_RK903_apsta.bin"
-WIFI_DRIVER_FW_PATH_P2P     := "/system/etc/firmware/fw_RK903_p2p.bin"
-WIFI_DRIVER_MODULE_NAME     := "RK903"
-WIFI_DRIVER_MODULE_ARG      := "iface_name=wlan0 firmware_path=/system/etc/firmware/fw_RK903.bin nvram_path=/system/etc/firmware/nvram_RK903.cal"
+WIFI_DRIVER_FW_PATH_PARAM   := ""
+WIFI_DRIVER_FW_PATH_STA     := ""
+WIFI_DRIVER_FW_PATH_AP      := ""
+WIFI_DRIVER_FW_PATH_P2P     := ""
+WIFI_DRIVER_MODULE_NAME     := "wlan"
+WIFI_DRIVER_MODULE_ARG      := ""
 
 BOARD_HAS_LARGE_FILESYSTEM := true
 
@@ -84,3 +90,5 @@ TARGET_PREBUILT_KERNEL := device/yuandao/n70/kernel
 TARGET_BOOTANIMATION_PRELOAD := true
 
 BOARD_HAVE_BLUETOOTH := false
+
+TARGET_RELEASETOOL_OTA_FROM_TARGET_SCRIPT := device/yuandao/n70/releasetools/n70_ota_from_target_files

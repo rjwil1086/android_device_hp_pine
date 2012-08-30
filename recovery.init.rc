@@ -1,12 +1,12 @@
 on early-init
     start ueventd
+    insmod /rk30xxnand_ko.ko
 
 on init
     export PATH /system/bin:/sbin
-    export LD_LIBRARY_PATH /lib
     export ANDROID_ROOT /system
     export ANDROID_DATA /data
-    export EXTERNAL_STORAGE /sdcard
+    export EXTERNAL_STORAGE /emmc
 
     symlink /system/etc /etc
 
@@ -15,10 +15,13 @@ on init
     mkdir /cache
     mkdir /emmc
     mkdir /sdcard
+    mkdir /sd-ext
     mount /tmp /tmp tmpfs
-
-on fs
-    insmod /rk30xxnand_ko.ko
+    mount vfat /dev/block/mtdblock10 /emmc
+    
+    write /sys/devices/virtual/bdi/179:0/read_ahead_kb 2048
+    write /sys/devices/virtual/bdi/7:0/read_ahead_kb 2048
+    write /sys/devices/virtual/bdi/31:0/read_ahead_kb 2048
 
 on boot
     setprop service.adb.root 1
@@ -31,14 +34,10 @@ on boot
 service ueventd /sbin/ueventd
     critical
 
-service erase_misc /sbin/sh -c "busybox dd if=/dev/zero of=/dev/block/mtd/by-name/misc bs=1024; sync"
+service erase_misc /sbin/sh -c "busybox dd if=/misc.img of=/dev/block/mtdblock1; sync"
     oneshot
 
 service recovery /sbin/recovery
-		console
-
-service console /system/bin/busybox sh
-    console
 
 service adbd /sbin/adbd recovery
     disabled

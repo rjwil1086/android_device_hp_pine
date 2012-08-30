@@ -1,8 +1,10 @@
 # libs
+lib/libEGL.so
 lib/libMali.so
 lib/libOMX_Core.so
 lib/libUMP.so
 lib/libapedec.so
+lib/libgui.so
 lib/libion.so
 lib/libjpeghwdec.so
 lib/libjpeghwenc.so
@@ -15,8 +17,8 @@ lib/librkwmapro.so
 lib/libstagefright.so
 lib/libstagefright_foundation.so
 lib/libstagefrighthw.so
+lib/libsurfaceflinger.so
 lib/libvpu.so
-lib/libwpa_client.so
 lib/libyuvtorgb.so
 lib/registry
 
@@ -54,7 +56,6 @@ lib/hw/gpu.rk30board.so
 lib/hw/gralloc.rk30board.so
 lib/hw/hwcomposer.rk30board.so
 lib/hw/lights.rk30board.so
-lib/hw/power.rk30xx.so
 lib/hw/sensors.rk30board.so
 
 # EGL
@@ -73,5 +74,4 @@ bin/mount.exfat
 bin/ntfs-3g
 bin/ntfs-3g.probe
 bin/performance
-bin/wpa_cli
-bin/wpa_supplicant
+bin/surfaceflinger

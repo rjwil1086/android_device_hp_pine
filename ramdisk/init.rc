@@ -121,7 +121,7 @@ on fs
     mount ext4 mtd@cache /cache wait noatime nodiratime nosuid nodev noauto_da_alloc
 
     insmod /system/lib/modules/ump.ko
-    insmod /system/lib/modules/mali.ko mali_dvfs=50,100,133,160,200,266,400 mali_init_clock=50
+    insmod /system/lib/modules/mali.ko
     insmod /system/lib/modules/rk29-ipp.ko
 
 on post-fs
@@ -345,9 +345,8 @@ on boot
 # Set this property so surfaceflinger is not started by system_init
     setprop system_init.startsurfaceflinger 0
 
-# Run sysinit
-    exec /system/bin/sysinit
 
+    class_start first
     class_start core
     class_start main
 
@@ -422,6 +421,10 @@ on property:persist.sys.usb.config=*
 
 ## Daemon processes to be run by init.
 ##
+service sysinit /system/bin/sysinit
+    class first
+    oneshot
+
 service ueventd /sbin/ueventd
     class core
     critical

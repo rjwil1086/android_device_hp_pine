@@ -28,11 +28,17 @@ PRODUCT_COPY_FILES += \
 # Ramdisk
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/ramdisk/rk30xxnand_ko.ko:root/rk30xxnand_ko.ko \
+    $(LOCAL_PATH)/ramdisk/init:root/init \
     $(LOCAL_PATH)/ramdisk/init.rc:root/init.rc \
     $(LOCAL_PATH)/ramdisk/init.rk30board.rc:root/init.rk30board.rc \
     $(LOCAL_PATH)/ramdisk/init.rk30board.usb.rc:root/init.rk30board.usb.rc \
     $(LOCAL_PATH)/ramdisk/misc.img:root/misc.img \
     $(LOCAL_PATH)/ramdisk/ueventd.rk30board.rc:root/ueventd.rk30board.rc
+
+# init.d scripts
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/init.d/03kernel:system/etc/init.d/03kernel \
+    $(LOCAL_PATH)/init.d/04mount:system/etc/init.d/04mount
 
 # Prebuilt configs
 PRODUCT_COPY_FILES += \
@@ -105,6 +111,19 @@ PRODUCT_PROPERTY_OVERRIDES += \
     dalvik.vm.execution-mode=int:jit \
     dalvik.vm.lockprof.threshold=500 \
     dalvik.vm.dexopt-flags=m=y
+
+PRODUCT_PROPERTY_OVERRIDES += \
+    persist.sys.timezone=Europe/Rome \
+    persist.sys.language=en \
+    persist.sys.country=US \
+    persist.sys.use_dithering=1 \
+    persist.sys.purgeable_assets=0 \
+    windowsmgr.max_events_per_sec=240 \
+    view.touch_slop=2 \
+    view.minimum_fling_velocity=25 \
+    ro.additionalmounts=/storage/sdcard0 \
+    ro.vold.switchablepair=/storage/sdcard0,/storage/sdcard1 \
+    persist.sys.vold.switchexternal=0
 
 DEVICE_PACKAGE_OVERLAYS += \
     $(LOCAL_PATH)/overlay
