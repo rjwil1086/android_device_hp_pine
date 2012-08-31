@@ -4,20 +4,20 @@ lib/libMali.so
 lib/libOMX_Core.so
 lib/libUMP.so
 lib/libapedec.so
-lib/libgui.so
-lib/libion.so
+#lib/libgui.so
+#lib/libion.so
 lib/libjpeghwdec.so
 lib/libjpeghwenc.so
-lib/libmediaplayerservice.so
+#lib/libmediaplayerservice.so
 lib/libomxvpu.so
 lib/libomxvpu_enc.so
 lib/libril-rk29-dataonly.so
 lib/librkswscale.so
 lib/librkwmapro.so
-lib/libstagefright.so
-lib/libstagefright_foundation.so
-lib/libstagefrighthw.so
-lib/libsurfaceflinger.so
+#lib/libstagefright.so
+#lib/libstagefright_foundation.so
+#lib/libstagefrighthw.so
+#lib/libsurfaceflinger.so
 lib/libvpu.so
 lib/libyuvtorgb.so
 lib/registry
@@ -60,7 +60,7 @@ lib/hw/sensors.rk30board.so
 
 # EGL
 lib/egl/libEGL_mali.so
-lib/egl/libGLES_android.so
+#lib/egl/libGLES_android.so
 lib/egl/libGLESv1_CM_mali.so
 lib/egl/libGLESv2_mali.so
 
@@ -74,4 +74,4 @@ bin/mount.exfat
 bin/ntfs-3g
 bin/ntfs-3g.probe
 bin/performance
-bin/surfaceflinger
+#bin/surfaceflinger
