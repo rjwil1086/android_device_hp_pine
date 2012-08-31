@@ -1,5 +1,3 @@
-import init.rk30board.usb.rc
-
 on early-init
     export EXTERNAL_STORAGE /storage/sdcard0
     export SECONDARY_STORAGE /storage/sdcard1
