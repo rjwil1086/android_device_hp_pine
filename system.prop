@@ -21,3 +21,4 @@ persist.facelock.detect_cutoff=5000
 persist.facelock.recog_cutoff=5000
 persist.sys.usb.config=mass_storage,adb
 persist.sys.strictmode.visual=false
+ro.disable_phablet_ui=1

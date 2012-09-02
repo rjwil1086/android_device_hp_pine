@@ -40,6 +40,8 @@
     <bool name="config_sms_capable">true</bool>
     
     <bool name="config_screenOffAnimation">false</bool>    
+    
+    <bool name="config_showNavigationBar">true</bool>
    
     <bool translatable="false" name="config_wifi_dual_band_support">false</bool>
     
