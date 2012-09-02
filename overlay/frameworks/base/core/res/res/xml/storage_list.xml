@@ -52,7 +52,7 @@
                  android:mtpReserve="100"
                  android:maxFileSize="0" />
 
-    <storage android:mountPoint="/storage/sdcard2"
+    <storage android:mountPoint="/storage/usbdisk0"
     		 android:storageDescription="@string/storage_usb"
                  android:primary="false"
                  android:emulated="false"
