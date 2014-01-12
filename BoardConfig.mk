@@ -16,6 +16,7 @@ TARGET_BOOTLOADER_BOARD_NAME := pine
 #BOARD_KERNEL_CMDLINE := console=ttyFIQ0 androidboot.console=ttyFIQ0 init=/init initrd=0x62000000,0x00800000 mtdparts=rk29xxnand:0x00002000@0x00002000(misc),0x00004000@0x00004000(kernel),0x00008000@0x00008000(boot),0x00008000@0x00010000(recovery),0x000C0000@0x00018000(backup),0x000E1000@0x000D8000(cache),0x00002000@0x001B9000(kpanic),0x00140000@0x001BB000(system),-@0x002FB000(userdata)
 BOARD_KERNEL_CMDLINE :=
 BOARD_KERNEL_BASE := 0x60400000
+BOARD_MKBOOTIMG_ARGS := --ramdisk_offset 0x01600000
 BOARD_KERNEL_PAGESIZE := 16384
 
 # fix this up by examining /proc/mtd on a running device
