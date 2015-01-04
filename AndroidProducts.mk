@@ -15,5 +15,5 @@
 #
 
 PRODUCT_MAKEFILES := \
-    $(LOCAL_DIR)/full_n70.mk
+    $(LOCAL_DIR)/full_pine.mk
     

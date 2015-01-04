@@ -1,0 +1,7 @@
+/boot		mtd	/dev/block/mtdblock3
+/recovery	mtd	/dev/block/mtdblock4
+/cache		ext4	/dev/block/mtdblock6
+/system		ext4	/dev/block/mtdblock8
+/userdata	ext4	/dev/block/mtdblock9
+
+/external_sd	vfat	/dev/block/mmcblk0p1	flags=display="Micro SDcard";storage;wipeingui;removable

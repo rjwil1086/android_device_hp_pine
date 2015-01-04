@@ -1,14 +1,22 @@
+import init.rk30board.usb.rc
+
 on early-init
-    export EXTERNAL_STORAGE /storage/sdcard0
-    export SECONDARY_STORAGE /storage/sdcard1
+    # for backwards compatibility
     mkdir /storage 0050 system sdcard_r
     mkdir /storage/sdcard0 0000 system system
-    mkdir /storage/sdcard1 0000 system system
-    mkdir /storage/usbdisk0 0000 system system
     symlink /storage/sdcard0 /sdcard
     symlink /storage/sdcard0 /mnt/sdcard
-    symlink /storage/sdcard1 /mnt/external_sd
-    symlink /storage/usbdisk0 /mnt/usb_storage
+
+    # this property is used for external_storage when not flash partition
+    export EXTERNAL_STORAGE_USE_DATA /storage/sdcard0
+    export EXTERNAL_STORAGE /storage/sdcard0
+    export SECOND_VOLUME_STORAGE /mnt/external_sd
+    mkdir /mnt/external_sd 0000 system system
+#    export THIRD_VOLUME_STORAGE /mnt/usb_storage
+#    mkdir /mnt/usb_storage 0000 system system
+
+on fs
+    #mount vfat mtd@user /mnt/sdcard wait noatime nodiratime  nosuid nodev uid=1000,gid=1015,fmask=0702,dmask=0702
 
 on post-fs-data
     # we will remap this as /mnt/sdcard with the sdcard fuse tool
@@ -19,33 +27,29 @@ on init
     symlink /etc/bluez/bcm432x/BCM4329B1_TestOnly_0237_26MHz_SEMCO_B23.hcd /bcm4329_samsung.hcd
     symlink /etc/bluez/bcm432x/BCM4329B1_USI_WM-BN-BM-01.hcd /bcm4329_usi.hcd
     symlink /etc/bluez/bcm432x/BCM4329B1_002.002.023.0389.0000_Cybertan-Foxconn_Cls2_extLNA_EDRmaxInputLev+PeakDEVM_NT.hcd /bcm4329_cybertan.hcd
-# for adobe reader mobile
-    export RK_ADOBE_DE_MOBILE 1
-    export EBOOK_PAGE_VISIBLE_NUMBER 2　
-    export RK_ADEPT_DEVICE_TYPE mobile
-    export RK_ADOBE_DE_DOC_FOLDER "/mnt/sdcard/Digital Editions"
-    export RK_ADEPT_ACTIVATION_FILE /mnt/sdcard/.adobe-digital-editions/activation.xml
-    export RK_ADEPT_DEVICE_FILE /mnt/sdcard/.adobe-digital-editions/device.xml
-    export RK_ADEPT_DEVICE_SALT_FILE /mnt/sdcard/.adobe-digital-editions/devicesalt
-    export ADOBE_FONTS_DIR  /system/fonts/adobefonts/
 
 on boot
     mount debugfs /sys/kernel/debug /sys/kernel/debug
+    chown system system /sys/devices/system/cpu/cpu1/online
+    chmod 0660 /sys/devices/system/cpu/cpu1/online
     insmod /system/lib/modules/vpu_service.ko
+
+#for hp beats
+    chown system system /sys/class/sound/card0/device/acs422_device/acs422_spk_preset
+    chown system system /sys/class/sound/card0/device/acs422_device/acs422_hp_preset
 
 #backlight
     chown system system /sys/class/backlight/rk28_bl/brightness
 
-#hdmi
-    chown root system /sys/class/display/HDMI/enable
-    chown root system /sys/class/display/HDMI/mode
-    chown root system /sys/class/display/HDMI/scale
-
 # for wifi
     mkdir /data/misc/wifi 0770 wifi wifi
     mkdir /data/misc/wifi/sockets 0770 wifi wifi
+    mkdir /data/misc/wifi/sockets/tmp 0440 wifi wifi
     mkdir /data/misc/dhcp 0770 dhcp dhcp
     chown dhcp dhcp /data/misc/dhcp
+#for hdmi timem out
+   chown root system /sys/class/graphics/fb0/blank
+   chmod 0664 /sys/class/graphics/fb0/blank
 
 # bluetooth power up/down interface
     chmod 0660 /dev/ttyS0
@@ -57,30 +61,59 @@ on boot
     chown bluetooth bluetooth /sys/class/rfkill/rfkill0/type
     chown bluetooth bluetooth /sys/class/rfkill/rfkill0/state
     chmod 0664 /sys/class/rfkill/rfkill0/state
+    chmod 0664 /dev/rfkill
 
     chown system system /sys/mali400_utility/utility
-    chmod 0664 /sys/mali400_utility/utility 
+    chmod 0664 /sys/mali400_utility/utility
+
+    chown system system /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+    chmod 0664 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+     
+    chown system system /sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed
+    chmod 0664 /sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed
+
 # create virtual SD card at /mnt/sdcard, based on the /data/media directory
 # daemon will drop to user/group system/media_rw after initializing
 # underlying files in /data/media will be created with user and group media_rw (1023)
-#service sdcard /system/bin/sdcard /data/media 1023 1023
-#    class late_start
+service sdcard /system/bin/sdcard /data/media 1023 1023
+    class late_start
+    disabled
 
-service wpa_supplicant /system/bin/wpa_supplicant \
-    -Dwext -iwlan0 -c/data/misc/wifi/wpa_supplicant.conf
-    #-Dnl80211 -iwlan0 -puse_p2p_group_interface=1 -e/data/misc/wifi/entropy.bin
+on property:ro.factory.storage_policy=1
+    #symlink /storage/sdcard0 /mnt/sdcard
+    #symlink /storage/sdcard0 /sdcard
+    start sdcard
+
+on property:ro.factory.storage_policy=0
+    symlink /mnt/sdcard /sdcard
+    stop sdcard
+
+# does not yet support applying capabilities, so run as root and
+# let wireless daemon drop uid to system with the right linux capabilities
+service mwirelessd /system/bin/MarvellWirelessDaemon
+    class main
+    user root
+    oneshot
+
+
+#We must run as root because we use driver_wext which will create a netlink socket to communicate
+#with the wifi driver. This operation needs root permission.
+service wpa_supplicant /system/bin/wpa_supplicant -iwlan0 -Dnl80211 -c/data/misc/wifi/wpa_supplicant.conf -dd
+    class main
+    socket wpa_wlan0 dgram 660 wifi wifi
+    socket wpa_p2p0 dgram 660 wifi wifi
+    disabled
+    oneshot
+
+
+#add for wifi direct (gwl)
+service p2p_supplicant /system/bin/wpa_supplicant \
+    -iwlan0 -Dnl80211 -c/data/misc/wifi/wpa_supplicant.conf -N \
+    -ip2p0 -Dnl80211 -c/data/misc/wifi/p2p_supplicant.conf
     #   we will start as root and wpa_supplicant will switch to user wifi
     #   after setting up the capabilities required for WEXT
     #   user wifi
     #   group wifi inet keystore
-    class main
-    socket wpa_wlan0 dgram 660 wifi wifi
-    disabled
-    oneshot
-
-#add for wifi direct (gwl)
-service p2p_supplicant /system/bin/wpa_supplicant \
-    -Dnl80211 -iwlan0 -puse_p2p_group_interface=1 -e/data/misc/wifi/entropy.bin
     class main
     socket wpa_wlan0 dgram 660 wifi wifi
     disabled
@@ -94,13 +127,6 @@ service hostapd /system/bin/hostapd /data/misc/wifi/hostapd.conf
 # for realtek wifi
 service hostapd_rtl /system/bin/hostapd_rtl /data/misc/wifi/hostapd.conf
     class main
-    disabled
-    oneshot
-
-service hciattach /system/bin/brcm_patchram_plus --patchram bychip --baudrate 1500000 --enable_lpm --enable_hci /dev/ttyS0
-    console
-    user bluetooth
-    group bluetooth net_bt_admin
     disabled
     oneshot
 
@@ -130,6 +156,10 @@ service bugreport /system/bin/bugreport.sh
     oneshot
     keycodes 114 115 116
 
+service chrome /system/bin/chrome.sh
+    class main
+    oneshot
+
 service dhcpcd_eth0 /system/bin/dhcpcd -ABKL
     class main
 	disabled
@@ -149,9 +179,22 @@ service akmd /system/bin/akmd8975
         group system
         oneshot
 
-on property:sys.gmali.performance=video
-    start performance
+on property:sys.gmali.performance=ui
+    start pat_ui
 
-service performance /system/bin/performance
+service pat_ui /system/bin/performance ui
+    disabled
+    oneshot
+
+on property:sys.gmali.performance=video
+    start pat_video
+
+#factory
+on property:ro.factory.tool=1     
+    write /sys/class/gsensor_class/orientation gsensor={-1,0,0,0,0,1,0,-1,0}
+    write /sys/devices/platform/rk29-keypad/rk29key {menu:MENU,home:HOME,vol+:VOLUP,vol-:VOLDOWN,play:PLAY,esc:ESC,sensor:CAMERA}
+    write /sys/devices/platform/rk29_backlight/rk29backlight 100
+
+service pat_video /system/bin/performance video
     disabled
     oneshot

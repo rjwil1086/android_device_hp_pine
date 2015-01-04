@@ -1,5 +1,5 @@
-VENDOR=yuandao
-DEVICE=n70
+VENDOR=hp
+DEVICE=pine
 OUTDIR=vendor/$VENDOR/$DEVICE
 MAKEFILE=../../../$OUTDIR/$DEVICE-vendor-blobs.mk
 

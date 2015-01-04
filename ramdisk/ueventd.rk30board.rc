@@ -15,6 +15,7 @@
 /dev/vpu_mem              0666   system     system
 /dev/rk29-ipp             0666   system     system   
 /dev/rga                  0666   system     system
+/dev/video_state          0666   system     system
 
 # for Sensor HAL
 /dev/akm8973              0660   system     system
@@ -29,6 +30,7 @@
 
 # for GPS
 #/dev/ttyS3                0600   gps        gps
+/dev/gps                  0660   gps        gps
 
 # for BT
 /dev/vflash               0660   bluetooth  bluetooth
@@ -51,7 +53,20 @@
 /dev/mali           	  0666   system   	 system
 /dev/ump           	  0666   system   	 system
 
+#CC&C Johnson.Wang add mt6620
+/dev/stpwmt               0660   system         system
+/dev/stpgps               0664   system         system
+/dev/fm                   0666   system         system
+/dev/wmtWifi              0660   system         system
+
+# for sgx
+/dev/pvrsrvkm         0666   system      system
+
 #for hdmi
 /sys/class/display/HDMI/enable   0664     root       system
 /sys/class/display/HDMI/mode     0664     root       system
 /sys/class/display/HDMI/scale    0664     root       system
+/sys/class/graphics/fb0/blank    0664     root    system
+
+#for DRM
+/dev/rknand_sys_storage   0660   system     system 
